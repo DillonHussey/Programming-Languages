@@ -3,15 +3,18 @@ import pymunk
 import Marble
 import Wall
 import Ding
+import math
 import random
 from pymunk.pyglet_util import DrawOptions
 from pyglet import image
 from pyglet.window import key
 from pymunk.vec2d import Vec2d
-from math import degrees
+
 from Marble import Marble
 from Paddle import Paddle
 
+
+# make sure that the spring is kinematic or dynamic
 
 c=0
 #window and space setup
@@ -26,7 +29,33 @@ yodaimg = pyglet.image.load('./res/babyYoda.png')
 yoda = pyglet.sprite.Sprite(yodaimg, 10,10)
 Wall.makeWalls(space)
 Ding.makeDings(space)
-pad1 = Paddle(space, (650/4, 100), 30)
+#pad1 = Paddle(space, (650/4, 100), 30)
+
+
+#Making the Paddles
+#Left Paddle
+rotation_center_body = pymunk.Body(body_type = pymunk.Body.STATIC) # 1
+rotation_center_body.position = (650/4, 175+30)
+body = pymunk.Body(10, 10000) # 2
+body.position = (650/4, 175+30)
+leftPaddle = pymunk.Segment(body, (115, -45), (0.0, 0.0), 5.0)
+
+rotation_center_joint = pymunk.PinJoint(body, rotation_center_body, (0,0), (0,0)) # 3
+leftSpring = pymunk.DampedRotarySpring(body, rotation_center_body, -math.pi/8, 200, 200)
+
+#Right Paddle
+rotation_center_body2 = pymunk.Body(body_type = pymunk.Body.STATIC) # 1
+rotation_center_body2.position = (650*3/4, 175+30)
+body2 = pymunk.Body(10, 10000) # 2
+body2.position = (650*3/4, 175+30)
+rightPaddle = pymunk.Segment(body2, (-115, -45), (0.0, 0.0), 5.0)
+
+rotation_center_jointR = pymunk.PinJoint(body2, rotation_center_body2, (0,0), (0,0)) # 3
+
+
+space.add(leftSpring, leftPaddle, body, rotation_center_joint, rightPaddle, body2,rotation_center_jointR )
+
+
 
 
 
@@ -34,11 +63,11 @@ pad1 = Paddle(space, (650/4, 100), 30)
 def on_mouse_press(x,y,button, modifier):
     global marbles
     #add a marble
-    #marbleBody = Marble(space, 100, (x,y))
-    #marbles.append(marbleBody)
+    marbleBody = Marble(space, 100, (x,y))
+    marbles.append(marbleBody)
     #pad1.applyForceL()
 
-    # sprites.append(marbleBody.sprite)
+    #sprites.append(marbleBody.sprite)
     #space.add(marbleBody.body, marbleBody.shape)
     
     #use pin joint, damped rotary spring
@@ -85,7 +114,7 @@ def on_draw():
 
 
 def update(dt):
-    pad1.update(space, dt)
+   # pad1.update(space, dt)
     space.step(dt)
     
     
