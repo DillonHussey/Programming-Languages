@@ -4,61 +4,66 @@ from pymunk.pyglet_util import DrawOptions
 import math
 from pymunk.vec2d import Vec2d
 
-ShapeList = {((5,775),(5,150),.8,1.0),
-            ((650,675),(650,150),.8,1.0),
-            ((5, 150),(155,75), .8, .68),
-            ((650, 150),(650-145, 75), .5, .68),
+#data for each shape
+ShapeList = {((5,775),(5,150),.8,1.0,0),
+            ((650,675),(650,150),.8,1.0,0),
+            ((5, 150),(155,75), .8, .68,0),
+            ((650, 150),(650-145, 75), .5, .68,0),
 
-            ((75, 275), (140, 225), 2, 1),
-            ((655-75,275), (655-140, 225), 2, 1),    
+            ((70, 275), (140, 225), 2, 1,200),
+            ((655-70,275), (655-140, 225), 2, 1,200),    
 
             
-            ((5,775), (50,805), 0.8, 1.0),
-            ((650,675), (650-45,705), .8, 1.0),
-            ((50,805), (650,805), .8, 1.0), 
-            ((650, 805), (720, 700), 2, .1),
-            ((720, 75), (720, 750), .8,1),
+            ((50,805),(5,775) , 0.8, 1.0,0),
+            ((650-45,705),(650,675), .8, 1.0,0),
+            ((50,805), (650,805), .8, 1.0,0), 
+            ((650, 805), (720, 700), 2, .1,0),
+            ((720, 75), (720, 750), .8,1,0),
 
 
-            #((650/4+50, 150), (650*3/4-50, 150), 3, .6),
+           
 
+            ((670,40), (705,40), 2.5, .001,0),
 
-            ((670,40), (705,40), 2.5, .001),
-
-            #((327,580), 0, 2.1, .3),
-            #((150,510), 0, 2.1, .3),
-            #((504,510), 0, 2.1, .3)
-
+           
                 }
 
 wallList = []
 
 class Wall:
-    image = pyglet.image.load('./res/marble1.png')
-    
+    #loads image and sets anchor
+    image = pyglet.image.load('./res/background.png')
+    image.anchor_x = image.width // 2
+    image.anchor_y = image.height // 2
 
     
         
     def __init__(self, space, p):
+        #shape data
         self.shape = segment_shape = pymunk.Segment(space.static_body, p[0], p[1], 2)
         self.shape.elasticity = p[2]
         self.shape.friction = p[3]
         space.add(self.shape)
 
         self.img = Wall.image
+        self.shape.id = p[4]
+        leg1 = (p[1][0]- p[0][0])
+        leg2 = (p[1][1]- p[0][1])
+        #makes sprite centered at the average of endpoints
+        self.sprite = pyglet.sprite.Sprite(self.img,x=(p[0][0]+p[1][0])/2, y=(p[0][1]+p[1][1])/2)#float(xc), y=float(yc))
+        #sets scale to segment length (pythag theorem) / image width
+        self.sprite.scale_x =(((leg1**2 + leg2**2) **.5) /(self.sprite.width))
+        self.sprite.scale_y = .05
+        #use trig to find angle to rotate sprite
+        angle = math.degrees(math.acos(leg1 / (leg1**2 + leg2**2)**.5 ))
+        self.sprite.rotation = angle
 
-        leg1 = (p[0][0]- p[1][0])
-        leg2 = (p[0][1]- p[1][1])
-        self.img.width = ((p[0][0]- p[1][0])**2 +(p[0][1]- p[1][1])**2)**1/2
-        self.img.height = (3)
-        xc, yc= self.shape.body.position[0], self.shape.body.position[1]
-      #  self.sprite = pyglet.sprite.Sprite(self.img,x=xc, y=yc)
-      #  self.sprite.rotation = math.degrees(math.asin(leg2/leg1))
 
     def draw(self):
         if self.sprite !=None:
             self.sprite.draw()
     
+
 
 
 def makeWalls(space):
