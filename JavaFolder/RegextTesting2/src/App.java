@@ -31,4 +31,8 @@ public class App {
         return s.matches("^[^\\d].*");
 
     }
+
+    static String aRef(String s){
+        return s.pattern
+    }
 }
