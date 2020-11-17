@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class App {
     public static void main(String[] args) {
         HashMap<String, Integer> map = new HashMap<>();
-
+//\/\/(.*\.?)
         map.put("Hello", 10);
         map.put("Dorris", 20);
         map.put("Fofo", 30);
