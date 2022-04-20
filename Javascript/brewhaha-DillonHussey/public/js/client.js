@@ -36,7 +36,7 @@ class Boxmaker{
 
 function preload() {
     //load image
-    img = loadImage('img/shoes.jpg');
+    img = loadImage('img/tunnel.jpg');
 }
 
 function setup() {
